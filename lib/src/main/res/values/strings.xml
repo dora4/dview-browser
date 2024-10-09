@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_web_ssl_error_title">The current website security certificate has expired or is untrustworthy\nDo you want to continue browsing?</string>
+    <string name="common_web_ssl_error_allow">Continue browsing</string>
+    <string name="common_web_ssl_error_reject">go back to the last page</string>
+    <string name="common_web_location_permission_title">The current website needs to obtain your geographical location</string>
+    <string name="common_web_location_permission_allow">Allow</string>
+    <string name="common_web_location_permission_reject">Reject</string>
+    <string name="common_web_call_phone_title">current number %s</string>
+    <string name="common_web_call_phone_allow">Allow</string>
+    <string name="common_web_call_phone_reject">Reject</string>
+</resources>
