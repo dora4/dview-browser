@@ -6,6 +6,7 @@ interface DialogEvent {
 
         const val EVENT_TYPE_ON_JS_CONFIRM = "onJsConfirm"
         const val EVENT_TYPE_ON_RECEIVED_SSL_ERROR = "onReceivedSslError"
+        const val EVENT_TYPE_ON_GEOLOCATION_PERMISSIONS_SHOW_PROMPT = "onGeolocationPermissionsShowPrompt"
         const val EVENT_TYPE_CALL = "call"
     }
 }

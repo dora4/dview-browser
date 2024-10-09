@@ -36,15 +36,15 @@ import com.hjq.permissions.XXPermissions
 import dora.BaseActivity
 import dora.util.ViewUtils
 import dora.widget.browser.DialogEvent.Companion.EVENT_TYPE_CALL
+import dora.widget.browser.DialogEvent.Companion.EVENT_TYPE_ON_GEOLOCATION_PERMISSIONS_SHOW_PROMPT
 import dora.widget.browser.DialogEvent.Companion.EVENT_TYPE_ON_JS_CONFIRM
 import dora.widget.browser.DialogEvent.Companion.EVENT_TYPE_ON_RECEIVED_SSL_ERROR
 import dora.widget.browser.R
 
-
 class BrowserView @SuppressLint("SetJavaScriptEnabled")
     @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet?
+    attrs: AttributeSet? = null
 ) : NestedWebView(getFixedContext(context), attrs, android.R.attr.webViewStyle), LifecycleEventObserver {
 
     init {
@@ -173,7 +173,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
                     }
                 }
 
-            }).show("onReceivedSslError",
+            }).show(EVENT_TYPE_ON_RECEIVED_SSL_ERROR,
                 ContextCompat.getString(activity, R.string.common_web_ssl_error_title),
                 positiveResId = R.string.common_web_ssl_error_allow,
                 negativeResId = R.string.common_web_ssl_error_reject)
@@ -238,6 +238,9 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
             val context = view.context as Activity
             DoraDoubleButtonDialog(context, object : DoraDoubleButtonDialog.DialogListener {
                 override fun onCancel(eventType: String) {
+                    if (eventType == EVENT_TYPE_CALL) {
+                        // nothing to do
+                    }
                 }
 
                 override fun onConfirm(eventType: String) {
@@ -258,6 +261,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
     }
 
     class BrowserChromeClient(private val webView: BrowserView?) : WebChromeClient() {
+
         init {
             requireNotNull(webView) { "web view, are you ok?" }
         }
@@ -271,7 +275,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
             message: String,
             result: JsResult
         ): Boolean {
-            webView!!.context ?: return false
+            view.context ?: return false
             Tips.showWarning(message)
             return true
         }
@@ -285,7 +289,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
             message: String,
             result: JsResult
         ): Boolean {
-            val activity = webView!!.context as Activity
+            val activity = view.context as Activity
             DoraDoubleButtonDialog(activity, object : DoraDoubleButtonDialog.DialogListener {
                 override fun onCancel(eventType: String) {
                     if (eventType == EVENT_TYPE_ON_JS_CONFIRM) {
@@ -313,7 +317,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
             defaultValue: String,
             result: JsPromptResult
         ): Boolean {
-            val activity = webView!!.context ?: return false
+            val activity = view.context ?: return false
             DoraAlertDialog(activity).show(dora.widget.alertdialog.R.layout.dialog_dview_input) {
                 positiveListener {
                     val editText = getView<AppCompatEditText>(dora.widget.alertdialog.R.id.et_dview_input)
@@ -333,17 +337,21 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
             val activity = webView!!.context as Activity
             DoraDoubleButtonDialog(activity, object : DoraDoubleButtonDialog.DialogListener {
                 override fun onCancel(eventType: String) {
-                    callback.invoke(origin, false, true)
+                    if (eventType == EVENT_TYPE_ON_GEOLOCATION_PERMISSIONS_SHOW_PROMPT) {
+                        callback.invoke(origin, false, true)
+                    }
                 }
 
                 override fun onConfirm(eventType: String) {
-                    XXPermissions.with(activity).permission(
-                        Permission.ACCESS_FINE_LOCATION,
-                        Permission.ACCESS_COARSE_LOCATION
-                    )
-                        .request { _, _ -> callback.invoke(origin, true, true) }
+                    if (eventType == EVENT_TYPE_ON_GEOLOCATION_PERMISSIONS_SHOW_PROMPT) {
+                        XXPermissions.with(activity).permission(
+                            Permission.ACCESS_FINE_LOCATION,
+                            Permission.ACCESS_COARSE_LOCATION
+                        )
+                            .request { _, _ -> callback.invoke(origin, true, true) }
+                    }
                 }
-            }).show("onGeolocationPermissionsShowPrompt",
+            }).show(EVENT_TYPE_ON_GEOLOCATION_PERMISSIONS_SHOW_PROMPT,
                 ContextCompat.getString(activity, R.string.common_web_location_permission_title),
                 positiveResId = R.string.common_web_location_permission_allow,
                 negativeResId = R.string.common_web_location_permission_reject)
@@ -362,7 +370,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
             callback: ValueCallback<Array<Uri>>,
             params: FileChooserParams
         ): Boolean {
-            val activity = this.webView!!.context as? BaseActivity<*> ?: return false
+            val activity = webView.context as? BaseActivity<*> ?: return false
             XXPermissions.with(activity).permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request { _, _ -> openSystemFileChooser(activity, callback, params) }
             return true

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string name="common_web_ssl_error_title">目前網站安全憑證已過期或不可信\n是否繼續瀏覽</string>
+    <string name="common_web_ssl_error_allow">繼續瀏覽</string>
+    <string name="common_web_ssl_error_reject">回上一頁</string>
+    <string name="common_web_location_permission_title">目前網站需要取得您的地理位置</string>
+    <string name="common_web_location_permission_allow">授予</string>
+    <string name="common_web_location_permission_reject">拒絕</string>
+    <string name="common_web_call_phone_title">目前號碼 %s</string>
+    <string name="common_web_call_phone_allow">撥打</string>
+    <string name="common_web_call_phone_reject">取消</string>
+</resources>
