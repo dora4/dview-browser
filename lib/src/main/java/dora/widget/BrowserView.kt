@@ -112,7 +112,7 @@ class BrowserView @SuppressLint("SetJavaScriptEnabled")
     /**
      * 销毁 WebView。
      */
-    private fun onDestroy() {
+    fun onDestroy() {
         // 停止加载网页
         stopLoading()
         // 清除历史记录
